@@ -15,7 +15,15 @@
   margin-left: 20px;
   border-radius: 10px;
 }
-#credits-button {
+
+#logo-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+#credits-button,
+#logout-button {
   background-color: grey;
   color: whitesmoke;
   border-radius: 10px;
@@ -28,20 +36,24 @@
 }
 
 #credits-button:hover,
-#credits-button:focus {
+#logout-button:hover {
   background-color: lightgrey;
   color: black;
+}
+
+#credits-button:focus,
+#logout-button:focus {
   outline: none;
 }
 
-#credits-button:active {
+#credits-button:active,
+#logout-button:active {
   background-color: #000000;
   color: grey;
   transform: none;
 }
 
-#logo-container{
+#button-container {
   display: flex;
-  align-items: center;
-  gap: 15px;
+  gap: 10px; /* Space between the buttons */
 }
