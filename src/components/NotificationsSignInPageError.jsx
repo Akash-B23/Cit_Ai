@@ -32,7 +32,15 @@ const signIn = async (
       const user = credentials.find(
         (cred) => cred.email === email && cred.password === password
       );
-
+      if (user && user.email.includes("DEAN")) {
+        navigate("/chart");
+        setIsLoggedIn(true);
+        resolve({
+          type: "CredentialsSignin",
+          error: null, // No error for successful login
+        });
+        return;
+      }
       if (user) {
         // If a match is found, extract the department from the email
         const department = email?.split("--")[0]?.replace("DEPT-OF-", "");

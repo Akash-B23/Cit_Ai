@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 const CreditsPieChart = () => {
-
   const navigate = useNavigate();
   const [departments] = useState([
     { id: 1, name: "CSE" },
@@ -173,7 +172,7 @@ const CreditsPieChart = () => {
         </button>
 
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/select-department")}
           style={{
             display: "flex",
             alignItems: "center",
@@ -192,7 +191,6 @@ const CreditsPieChart = () => {
           <FontAwesomeIcon icon={faHome} />
           Home
         </button>
-
       </div>
 
       {viewMode === "chart" &&
@@ -205,9 +203,13 @@ const CreditsPieChart = () => {
         )}
 
       {viewMode === "chart" && Object.keys(semesterData).length === 0 && (
-        <p style={{
-          marginInlineStart: "450px"
-        }}>No data available for the selected department and regulation.</p>
+        <p
+          style={{
+            marginInlineStart: "450px",
+          }}
+        >
+          No data available for the selected department and regulation.
+        </p>
       )}
 
       {viewMode === "table" && Object.keys(semesterData).length !== 0 && (

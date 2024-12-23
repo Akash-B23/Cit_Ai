@@ -13,7 +13,7 @@ const credentials = [
   { email: "DEPT-OF-CSBS--@HOD", password: "cit.--@HOD_CSBS" },
   { email: "DEPT-OF-MCT--@HOD", password: "cit.--@HOD_MCT" },
   { email: "DEPT-OF-CIVIL--@HOD", password: "cit.--@HOD_CIVIL" },
+  { email: "DEAN--@CIT", password: "cit.--@DEAN" },
 ];
-
 
 export default credentials;

@@ -1,10 +1,7 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import React, { useEffect } from "react";
 import logo from "../assets/cit_logo.jpeg";
 
 const Table = ({ semesterData, categoryData, categoryMapping }) => {
-  // Function to calculate total credits for a list of courses
   const calculateTotalCredits = (courses) => {
     return courses.reduce(
       (total, course) => total + parseFloat(course.credits || 0),
@@ -12,103 +9,108 @@ const Table = ({ semesterData, categoryData, categoryMapping }) => {
     );
   };
 
-  // useEffect hook to add the print functionality after the component mounts
   useEffect(() => {
     const button = document.getElementById("pdf");
     const tables = document.querySelectorAll(".generatePDF");
 
-    button.addEventListener("click", function () {
-      const mywindow = window.open("", "PRINT", "height=600,width=600");
-      // Open the new window
-      mywindow.document.open();
+    const handlePrint = () => {
+      const printWindow = window.open("", "PRINT", "height=500,width=800");
 
-      // Write styles and content for the document
-      mywindow.document.write(`
+      if (!printWindow) {
+        alert("Pop-up blocked. Please allow pop-ups for this website.");
+        return;
+      }
+
+      printWindow.document.open();
+      printWindow.document.write(`
         <html>
           <head>
+            <title>Course Details</title>
             <style>
               @page {
-                size: auto;
-                margin: 0;
+                size: A4;
+                margin: 10mm;
               }
               body {
                 font-family: Arial, sans-serif;
-                margin: 20px;
+                font-size: 12px;
+                margin: 0;
+                padding: 0;
               }
               .logo {
                 text-align: center;
                 margin-bottom: 20px;
               }
               .logo img {
-                width: 200px; /* Adjust as needed */
+                width: 100px;
                 height: auto;
               }
               table {
                 width: 100%;
-                border-collapse: collapse;
-                margin-top: 30px; /* Add space between tables */
+                margin-bottom: 20px;
+                border: 2px solid black;
+                text-align: center;
               }
               th, td {
-                padding: 10px;
-                border: 1px solid #ddd;
-                text-align: left;
+                padding: 8px;
+                border: 2px solid black;
                 word-wrap: break-word;
-                white-space: pre-wrap;
-              }
-              th {
-                background-color: #f2f2f2;
                 text-align: center;
               }
               .footer-note {
-                font-size: 12px;
+                position: absolute;
+                font-size: 10px;
                 margin-top: 20px;
+                text-align: center;
+                color: #555;
               }
               .generatePDF {
-                page-break-before: always;
-              }
-              .generatePDF:last-child {
-                page-break-after: auto;
-              }
-              .no-data {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                font-size: 20px;
-                font-weight: bold;
-                color: #555;
+                page-break-inside: avoid;
               }
             </style>
           </head>
           <body>
             <div class="logo">
-              <img src="${logo}" alt="Logo Placeholder" />
+              <img src="${logo}" alt="Institute Logo" />
             </div>
       `);
 
+      // Write each table to the new document
       tables.forEach((table) => {
         const heading = table.previousElementSibling;
         if (heading) {
-          mywindow.document.write(`
-            <h2 style="text-align: center;">${heading.innerText}</h2>
-          `);
+          printWindow.document.write(
+            `<h2 style="text-align: center;">${heading.innerText}</h2>`
+          );
         }
-        mywindow.document.write(table.outerHTML);
+        printWindow.document.write(table.outerHTML);
       });
 
-      mywindow.document.write(`
+      // Add footer note
+      printWindow.document.write(`
         <div class="footer-note">
           *NCC Credit Course is offered for NCC students only. The grades earned by the students will be recorded in the Mark Sheet; however, the same shall not be considered for the computation of CGPA.
         </div>
         </body>
-      </html>
+        </html>
       `);
 
-      mywindow.document.close();
-      mywindow.focus();
-      mywindow.print();
-      return true;
-    });
+      printWindow.document.close();
+
+      setTimeout(() => {
+        printWindow.focus();
+        printWindow.print();
+        printWindow.onafterprint = () => {
+          printWindow.close();
+        };
+      }, 500);
+    };
+
+    button.addEventListener("click", handlePrint);
+
+    return () => {
+      button.removeEventListener("click", handlePrint);
+    };
   }, []);
 
   const isEmptyData =
@@ -123,7 +125,7 @@ const Table = ({ semesterData, categoryData, categoryMapping }) => {
         </div>
       ) : (
         <>
-          {/* Semester-wise tables */}
+          {/* Render semester tables */}
           {Object.entries(semesterData).map(([semester, courses]) => (
             <div key={semester} style={{ marginBottom: "20px" }}>
               <h2 style={{ textAlign: "center", marginBottom: "10px" }}>
@@ -136,23 +138,64 @@ const Table = ({ semesterData, categoryData, categoryMapping }) => {
                     margin: "10px auto",
                     borderCollapse: "collapse",
                     width: "80%",
+                    border: "1px solid black",
                   }}
                 >
                   <thead>
                     <tr>
-                      <th style={{ border: "1px solid #ddd", padding: "8px" }}>
+                      <th
+                        style={{
+                          padding: "10px",
+                          textAlign: "center",
+                          border: "1px solid black",
+                          background: "white",
+                          color: "black",
+                        }}
+                      >
                         Course Code
                       </th>
-                      <th style={{ border: "1px solid #ddd", padding: "8px" }}>
+                      <th
+                        style={{
+                          padding: "10px",
+                          textAlign: "center",
+                          border: "1px solid black",
+                          background: "white",
+                          color: "black",
+                        }}
+                      >
                         Theory/Practical
                       </th>
-                      <th style={{ border: "1px solid #ddd", padding: "8px" }}>
+                      <th
+                        style={{
+                          padding: "10px",
+                          textAlign: "center",
+                          border: "1px solid black",
+                          background: "white",
+                          color: "black",
+                        }}
+                      >
                         Course Name
                       </th>
-                      <th style={{ border: "1px solid #ddd", padding: "8px" }}>
+                      <th
+                        style={{
+                          padding: "10px",
+                          textAlign: "center",
+                          border: "1px solid black",
+                          background: "white",
+                          color: "black",
+                        }}
+                      >
                         Credits
                       </th>
-                      <th style={{ border: "1px solid #ddd", padding: "8px" }}>
+                      <th
+                        style={{
+                          padding: "10px",
+                          textAlign: "center",
+                          border: "1px solid black",
+                          background: "white",
+                          color: "black",
+                        }}
+                      >
                         LTP
                       </th>
                     </tr>
@@ -161,27 +204,57 @@ const Table = ({ semesterData, categoryData, categoryMapping }) => {
                     {courses.map((course, index) => (
                       <tr key={index}>
                         <td
-                          style={{ border: "1px solid #ddd", padding: "8px" }}
+                          style={{
+                            padding: "10px",
+                            textAlign: "center",
+                            border: "1px solid black",
+                            background: "white",
+                            color: "black",
+                          }}
                         >
                           {course.course_code}
                         </td>
                         <td
-                          style={{ border: "1px solid #ddd", padding: "8px" }}
+                          style={{
+                            padding: "10px",
+                            textAlign: "center",
+                            border: "1px solid black",
+                            background: "white",
+                            color: "black",
+                          }}
                         >
                           {course.tp}
                         </td>
                         <td
-                          style={{ border: "1px solid #ddd", padding: "8px" }}
+                          style={{
+                            padding: "10px",
+                            textAlign: "center",
+                            border: "1px solid black",
+                            background: "white",
+                            color: "black",
+                          }}
                         >
                           {course.course_name}
                         </td>
                         <td
-                          style={{ border: "1px solid #ddd", padding: "8px" }}
+                          style={{
+                            padding: "10px",
+                            textAlign: "center",
+                            border: "1px solid black",
+                            background: "white",
+                            color: "black",
+                          }}
                         >
                           {course.credits}
                         </td>
                         <td
-                          style={{ border: "1px solid #ddd", padding: "8px" }}
+                          style={{
+                            padding: "10px",
+                            textAlign: "center",
+                            border: "1px solid black",
+                            background: "white",
+                            color: "black",
+                          }}
                         >
                           {course.ltp}
                         </td>
@@ -192,11 +265,25 @@ const Table = ({ semesterData, categoryData, categoryMapping }) => {
                     <tr>
                       <td
                         colSpan="3"
-                        style={{ textAlign: "right", padding: "8px" }}
+                        style={{
+                          padding: "10px",
+                          textAlign: "right",
+                          border: "1px solid black",
+                          background: "white",
+                          color: "black",
+                        }}
                       >
                         <strong>Total Credits:</strong>
                       </td>
-                      <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                      <td
+                        style={{
+                          padding: "10px",
+                          textAlign: "center",
+                          border: "1px solid black",
+                          background: "white",
+                          color: "black",
+                        }}
+                      >
                         <strong>{calculateTotalCredits(courses)}</strong>
                       </td>
                       <td></td>
@@ -209,7 +296,7 @@ const Table = ({ semesterData, categoryData, categoryMapping }) => {
             </div>
           ))}
 
-          {/* Category-wise tables */}
+          {/* Render category tables */}
           {Object.entries(categoryData).map(([category, courses]) => (
             <div key={category} style={{ marginBottom: "20px" }}>
               <h3 style={{ textAlign: "center", marginBottom: "10px" }}>
@@ -221,26 +308,64 @@ const Table = ({ semesterData, categoryData, categoryMapping }) => {
                   margin: "10px auto",
                   borderCollapse: "collapse",
                   width: "80%",
+                  border: "1px solid black",
                 }}
               >
                 <thead>
                   <tr>
-                    <th style={{ border: "1px solid #ddd", padding: "8px" }}>
+                    <th
+                      style={{
+                        padding: "10px",
+                        textAlign: "center",
+                        border: "1px solid black",
+                        background: "white",
+                        color: "black",
+                      }}
+                    >
                       Course Code
                     </th>
-                    <th style={{ border: "1px solid #ddd", padding: "8px" }}>
+                    <th
+                      style={{
+                        padding: "10px",
+                        textAlign: "center",
+                        border: "1px solid black",
+                        background: "white",
+                        color: "black",
+                      }}
+                    >
                       Theory/Practical
                     </th>
-                    <th style={{ border: "1px solid #ddd", padding: "8px" }}>
+                    <th
+                      style={{
+                        padding: "10px",
+                        textAlign: "center",
+                        border: "1px solid black",
+                        background: "white",
+                        color: "black",
+                      }}
+                    >
                       Course Name
                     </th>
-                    <th style={{ border: "1px solid #ddd", padding: "8px" }}>
-                      Semester
-                    </th>
-                    <th style={{ border: "1px solid #ddd", padding: "8px" }}>
+                    <th
+                      style={{
+                        padding: "10px",
+                        textAlign: "center",
+                        border: "1px solid black",
+                        background: "white",
+                        color: "black",
+                      }}
+                    >
                       Credits
                     </th>
-                    <th style={{ border: "1px solid #ddd", padding: "8px" }}>
+                    <th
+                      style={{
+                        padding: "10px",
+                        textAlign: "center",
+                        border: "1px solid black",
+                        background: "white",
+                        color: "black",
+                      }}
+                    >
                       LTP
                     </th>
                   </tr>
@@ -248,22 +373,59 @@ const Table = ({ semesterData, categoryData, categoryMapping }) => {
                 <tbody>
                   {courses.map((course, index) => (
                     <tr key={index}>
-                      <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                      <td
+                        style={{
+                          padding: "10px",
+                          textAlign: "center",
+                          border: "1px solid black",
+                          background: "white",
+                          color: "black",
+                        }}
+                      >
                         {course.course_code}
                       </td>
-                      <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                      <td
+                        style={{
+                          padding: "10px",
+                          textAlign: "center",
+                          border: "1px solid black",
+                          background: "white",
+                          color: "black",
+                        }}
+                      >
                         {course.tp}
                       </td>
-                      <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                      <td
+                        style={{
+                          padding: "10px",
+                          textAlign: "center",
+                          border: "1px solid black",
+                          background: "white",
+                          color: "black",
+                        }}
+                      >
                         {course.course_name}
                       </td>
-                      <td style={{ border: "1px solid #ddd", padding: "8px" }}>
-                        {course.semester}
-                      </td>
-                      <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                      <td
+                        style={{
+                          padding: "10px",
+                          textAlign: "center",
+                          border: "1px solid black",
+                          background: "white",
+                          color: "black",
+                        }}
+                      >
                         {course.credits}
                       </td>
-                      <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                      <td
+                        style={{
+                          padding: "10px",
+                          textAlign: "center",
+                          border: "1px solid black",
+                          background: "white",
+                          color: "black",
+                        }}
+                      >
                         {course.ltp}
                       </td>
                     </tr>
@@ -272,12 +434,26 @@ const Table = ({ semesterData, categoryData, categoryMapping }) => {
                 <tfoot>
                   <tr>
                     <td
-                      colSpan="4"
-                      style={{ textAlign: "right", padding: "8px" }}
+                      colSpan="3"
+                      style={{
+                        padding: "10px",
+                        textAlign: "right",
+                        border: "1px solid black",
+                        background: "white",
+                        color: "black",
+                      }}
                     >
                       <strong>Total Credits:</strong>
                     </td>
-                    <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+                    <td
+                      style={{
+                        padding: "10px",
+                        textAlign: "center",
+                        border: "1px solid black",
+                        background: "white",
+                        color: "black",
+                      }}
+                    >
                       <strong>{calculateTotalCredits(courses)}</strong>
                     </td>
                     <td></td>
@@ -291,18 +467,17 @@ const Table = ({ semesterData, categoryData, categoryMapping }) => {
       <button
         id="pdf"
         style={{
-          top: "15px",
-          right: "10px",
-          fontSize: "18px",
-          cursor: "pointer",
+          padding: "10px 20px",
+          fontSize: "16px",
+          borderRadius: "5px",
           border: "none",
-          padding: "8px 16px",
-          color: "white",
-          textTransform: "uppercase",
+          backgroundColor: "rgb(40, 167, 69)",
+          color: "rgb(255, 255, 255)",
+          cursor: "pointer",
+          width: "100px",
           position: "fixed",
-          borderRadius: "10px",
-          backgroundColor: "#4CAF50",
-          transition: "background-color 0.3s",
+          bottom: "20px",
+          right: "20px",
         }}
       >
         Print
